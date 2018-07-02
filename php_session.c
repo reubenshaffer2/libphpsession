@@ -240,11 +240,11 @@ int _psp_element_key(php_session_token *tok, php_session_var *element, int allow
         if (tmp.type == PSV_STRING) {
             element->name = tmp.sval.str;
             element->namelen = tmp.sval.len;
-            element->name_is_int = 1;
+            element->name_is_int = 0;
         } else if (tmp.type == PSV_INT) {
             element->iname = tmp.ival;
             element->namelen = 0;
-            element->name_is_int = 0;
+            element->name_is_int = 1;
         }
         return 1;
     }
