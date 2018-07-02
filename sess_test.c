@@ -33,7 +33,7 @@ void print_r_indent(php_session_var *var, int indentlevel) {
             for (i = 0; i < var->aval.len; ++i) {
                 print_indent(indentlevel + 1);
                 if (var->aval.vars[i].name_is_int) printf("    [%ld] => ", var->aval.vars[i].iname);
-                printf("[%s] => ", var->aval.vars[i].name);
+                else printf("[%s] => ", var->aval.vars[i].name);
                 print_r_indent(&var->aval.vars[i], indentlevel + 2);
             }
             print_indent(indentlevel);
