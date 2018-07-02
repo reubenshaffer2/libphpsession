@@ -9,6 +9,7 @@ The code is not thoroughly tested.
 My Makefile is a simple one written by hand that works with gcc/libtool on GNU/Linux systems.  I can only say that it compiled for me on the 2 systems I tried to compile it on since I wrote it.
 
 --------( Functions )--------
+
 php_session_array *parse_php_session_document(char *data, int *errp)
   data: a NULL terminated string
   errp: a pointer to an int to receive an error code in
