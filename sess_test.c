@@ -1,3 +1,7 @@
+/* Copyright 2018 Reuben Shaffer II. All rights reserved.
+ *  released under the terms of LGPL v2.1
+ */
+
 #include "php_session.h"
 #include <stdlib.h>
 #include <stdio.h>

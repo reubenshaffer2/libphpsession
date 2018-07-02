@@ -1,3 +1,7 @@
+/* Copyright 2018 Reuben Shaffer II. All rights reserved.
+ *  released under the terms of LGPL v2.1
+ */
+
 #ifndef PHP_SESSION_H
 #define PHP_SESSION_H 1
 
