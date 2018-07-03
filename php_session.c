@@ -169,7 +169,7 @@ int _psp_double(php_session_token *tok, double *doubleptr) {
 
 // PHP serialized "values"
 int _psp_val_null(php_session_token *tok, php_session_var *store) {
-    if (_psp_single_char(tok, 'N')) {
+    if (_psp_match_string(tok, "N;", 2)) {
         store->type = PSV_NULL;
         return 1;
     }
@@ -177,7 +177,7 @@ int _psp_val_null(php_session_token *tok, php_session_var *store) {
 }
 
 int _psp_val_bool(php_session_token *tok, php_session_var *store) {
-    if (_psp_match_string(tok, "b:0", 3) || _psp_match_string(tok, "b:1", 3)) {
+    if (_psp_match_string(tok, "b:0;", 4) || _psp_match_string(tok, "b:1;", 4)) {
         store->type = PSV_BOOL;
         store->bval = (tok->dat[2] == '1');
         return 1;
@@ -188,10 +188,10 @@ int _psp_val_bool(php_session_token *tok, php_session_var *store) {
 int _psp_val_int(php_session_token *tok, php_session_var *store) {
     php_session_token mtok;
     memcpy(&mtok, tok, sizeof(php_session_token));
-    if (_psp_single_char(tok, 'i') && _psp_colon(tok) && _psp_int(tok, &store->ival)) {
+    if (_psp_single_char(tok, 'i') && _psp_colon(tok) && _psp_int(tok, &store->ival) && _psp_semicolon(tok)) {
         store->type = PSV_INT;
+        tok->len += (tok->dat - &mtok.dat[mtok.len]);
         tok->dat = &mtok.dat[mtok.len];
-        tok->len += 2;
         return 1;
     }
     memcpy(tok, &mtok, sizeof(php_session_token));
@@ -201,10 +201,10 @@ int _psp_val_int(php_session_token *tok, php_session_var *store) {
 int _psp_val_double(php_session_token *tok, php_session_var *store) {
     php_session_token mtok;
     memcpy(&mtok, tok, sizeof(php_session_token));
-    if (_psp_single_char(tok, 'd') && _psp_colon(tok) && _psp_double(tok, &store->dval)) {
+    if (_psp_single_char(tok, 'd') && _psp_colon(tok) && _psp_double(tok, &store->dval) && _psp_semicolon(tok)) {
         store->type = PSV_DOUBLE;
+        tok->len += (tok->dat - &mtok.dat[mtok.len]);
         tok->dat = &mtok.dat[mtok.len];
-        tok->len += 2;
         return 1;
     }
     memcpy(tok, &mtok, sizeof(php_session_token));
@@ -220,7 +220,7 @@ int _psp_val_string(php_session_token *tok, php_session_var *store) {
             if (_psp_non_dquot_chars(tok, store->sval.len)) {
                 memcpy(store->sval.str, tok->dat, tok->len);
                 store->sval.str[store->sval.len] = '\0';
-                if (_psp_dquot(tok)) {
+                if (_psp_dquot(tok) && _psp_semicolon(tok)) {
                     tok->len += (tok->dat - &mtok.dat[mtok.len]);
                     tok->dat = &mtok.dat[mtok.len];
                     return 1;
@@ -267,7 +267,7 @@ int _psp_array_element_list(php_session_token *tok, php_session_var *elements, s
     if (_psp_lbrace(tok)) {
         real_count = 0;
         do {
-            if (_psp_element_key(tok, &elements[real_count], 1) && _psp_semicolon(tok) && _psp_val(tok, &elements[real_count]) && _psp_semicolon(tok)) ++real_count;
+            if (_psp_element_key(tok, &elements[real_count], 1) && _psp_val(tok, &elements[real_count])) ++real_count;
         } while (real_count < count);
         if (real_count == count && _psp_rbrace(tok)) {
             tok->len += (tok->dat - &mtok.dat[mtok.len]);
@@ -340,7 +340,7 @@ int _psp_object_prop_list(php_session_token *tok, php_session_var *props, size_t
         real_count = 0;
         do {
             if (_psp_element_key(tok, &props[real_count], 0) && _psp_colon(tok) && _psp_val(tok, &props[real_count])) ++real_count;
-        } while (real_count < count && _psp_semicolon(tok));
+        } while (real_count < count);
         if (real_count == count && _psp_rbrace(tok)) {
             tok->len += (tok->dat - &mtok.dat[mtok.len]);
             tok->dat = &mtok.dat[mtok.len];
@@ -462,7 +462,7 @@ php_session_array *parse_php_session_document(char *data, int *errp) {
             if (vars) free(vars);
             return NULL;
         }
-    } while (_psp_semicolon(&tok));
+    } while (tok.dat[tok.len]);
     if (tok.dat[tok.len] != '\0') {
         if (errp) *errp = 3;
         while (count) _psp_free_var(&vars[--count]);
