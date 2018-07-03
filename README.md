@@ -68,3 +68,16 @@ all the *val members in php_session_var are part of an anonymous union, so only 
 
 php_session_var.type is one of: PSV_NULL, PSV_STRING, PSV_INT, PSV_BOOL, PSV_DOUBLE, PSV_ARRAY, PSV_OBJECT
 
+--------( New Functions )--------
+
+All of the following return a pointer to a php_session_var, or NULL if not found
+
+Retrieve array element at index (type specific/no conversion):
+
+get_php_session_array_index_str(php_session_array *arr, const char *index)
+get_php_session_array_index_int(php_session_array *arr, long index)
+
+Retrieve a property from an object:
+get_php_session_object_property(php_session_object *obj, const char *prop)
+
+
