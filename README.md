@@ -6,7 +6,23 @@ Single source, single header.  Includes an example in sess_test.c
 This should build with any C compiler and work fine.
 The code is not thoroughly tested.
 
-My Makefile is a simple one written by hand that works with gcc/libtool on GNU/Linux systems.  I can only say that it compiled for me on the 2 systems I tried to compile it on since I wrote it.
+My Makefile is a simple one written by hand that works with gcc/libtool on GNU/Linux systems.  I
+can only say that it compiled for me on the 2 systems I tried to compile it on since I wrote it.
+If you use a different toolchain you probably will need to create a new Makefile.  It just didn't
+seem like using autoconf for a single source/header was necessary.
+
+Be advised, the parser is rather picky about the format.  It will not tolerate any leading or
+trailing whitespace.  When testing, I copied and pasted a session from another system to test
+with, and the trailing newline before the EOF that my editor added triggered a parsing error 2
+and I had to manually delete it from the file before it would parse.  It also does not keep any
+information about where a parsing error occurred or what it was.  It would be relatively simple
+to keep track of the last successfully parsed token and add it to the struct that the parsing
+functions use, but I had no need for it.  There is no function for serializing the data back to
+its original string, but it would be pretty trivial to add it.
+
+Possible portability issue: I used the size_t typedef quite a few times and this probably is
+not portable to Windows.  Replacing these with long or adding a #define or typedef may work
+just fine.  I meant to stick with the standard types/functions and just overlooked that it seems.
 
 --------( Functions )--------
 
