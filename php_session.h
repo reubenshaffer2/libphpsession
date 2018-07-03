@@ -72,4 +72,8 @@ php_session_array *parse_php_session_document(char *data, int *errp);
 /* free_php_session_array: frees the entire array and any children */
 void free_php_session_array(php_session_array *arr);
 
+php_session_var *get_php_session_array_index_str(php_session_array *arr, const char *index);
+php_session_var *get_php_session_array_index_int(php_session_array *arr, long index);
+php_session_var *get_php_session_object_property(php_session_object *obj, const char *prop);
+
 #endif

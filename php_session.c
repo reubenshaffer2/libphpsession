@@ -532,4 +532,31 @@ void free_php_session_array(php_session_array *arr) {
     free(arr);
 }
 
+php_session_var *get_php_session_array_index_str(php_session_array *arr, const char *index) {
+    size_t i;
+    if (!arr) return NULL;
+    for (i = 0; i < arr->len; ++i) {
+        if ((!arr->vars[i].name_is_int) && (strcmp(index, arr->vars[i].name) == 0)) return &arr->vars[i];
+    }
+    return NULL;
+}
+
+php_session_var *get_php_session_array_index_int(php_session_array *arr, long index) {
+    size_t i;
+    if (!arr) return NULL;
+    for (i = 0; i < arr->len; ++i) {
+        if (arr->vars[i].name_is_int && (index == arr->vars[i].iname)) return &arr->vars[i];
+    }
+    return NULL;
+}
+
+php_session_var *get_php_session_object_property(php_session_object *obj, const char *prop) {
+    size_t i;
+    if (!obj) return NULL;
+    for (i = 0; i < obj->len; ++i) {
+        if ((!obj->props[i].name_is_int) && (strcmp(prop, obj->props[i].name) == 0)) return &obj->props[i];
+    }
+    return NULL;
+}
+
 
