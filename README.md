@@ -24,38 +24,49 @@ Possible portability issue: I used the size_t typedef quite a few times and this
 not portable to Windows.  Replacing these with long or adding a #define or typedef may work
 just fine.  I meant to stick with the standard types/functions and just overlooked that it seems.
 
---------( Functions )--------
+----------
+## Functions
 
-php_session_array *parse_php_session_document(char *data, int *errp)
-  data: a NULL terminated string
-  errp: a pointer to an int to receive an error code in
-    error codes:
-    1 - memory allocation error
-    2 - parsing error (could possibly also be a malloc failure
-    3 - unexpected end of document
-    * - (*errp) will not be cleared to zero or touched unless an error occurs
-  return value: if successful, a php_session_array with the full session superglobal contents
+``php_session_array *parse_php_session_document(char *data, int *errp)``
+  - data: a NULL terminated string
+  - errp: a pointer to an int to receive an error code in
+    - error codes:    
+    - 1 - memory allocation error
+    - 2 - parsing error (could possibly also be a malloc failure
+    - 3 - unexpected end of document
+    -\* - (\*errp) will not be cleared to zero or touched unless an error occurs
+  - return value: if successful, a php_session_array with the full session superglobal contents
                 on failure, NULL will be returned and any allocated memory will be freed
 
-void free_php_session_array(php_session_array *arr)
+``void free_php_session_array(php_session_array *arr)``
 
---------( Types )--------
+----------
+## Types
+
+### The following are struct typedefs
 
 php_session_string:
+
     size_t len
     char *str
 
+
 php_session_array:
+
     size_t len
     php_session_var *vars
 
+
 php_session_object:
+
     size_t namelen
     char *name
     size_t len
     php_session_var *props
 
+
 php_session_var:
+
     unsigned char type
     unsigned char name_is_int
     size_t namelen
@@ -70,30 +81,32 @@ php_session_var:
         php_session_array aval
         php_session_object oval
 
-php_session_bool: defined as unsigned char
-php_session_int: defined as long
-php_session_double: defined as double
+### The following are basic typedefs
+php_session_bool: ``unsigned char``
 
-I think you can see what most of the fields are.
+php_session_int: ``long``
 
-php_session_var.name_is_int is a boolean field (0 or 1)
-if name_is_int, use iname for name (used for array indices only)
-otherwise use name
+php_session_double: ``double``
 
-all the *val members in php_session_var are part of an anonymous union, so only use the correct one.
 
-php_session_var.type is one of: PSV_NULL, PSV_STRING, PSV_INT, PSV_BOOL, PSV_DOUBLE, PSV_ARRAY, PSV_OBJECT
+**php_session_var.name_is_int** is a *boolean* field (0 or 1)
+if name_is_int, use *iname* for name (used for array indices only)
+otherwise use *name*
 
---------( New Functions )--------
+all the *val* members in php_session_var are part of an anonymous union, so only use the correct one.
+
+**php_session_var.type** is one of: PSV_NULL, PSV_STRING, PSV_INT, PSV_BOOL, PSV_DOUBLE, PSV_ARRAY, PSV_OBJECT
+
+----------
+## New Functions 
 
 All of the following return a pointer to a php_session_var, or NULL if not found
 
 Retrieve array element at index (type specific/no conversion):
 
-get_php_session_array_index_str(php_session_array *arr, const char *index)
-get_php_session_array_index_int(php_session_array *arr, long index)
+``get_php_session_array_index_str(php_session_array *arr, const char *index)``
+``get_php_session_array_index_int(php_session_array *arr, long index)``
 
 Retrieve a property from an object:
-get_php_session_object_property(php_session_object *obj, const char *prop)
 
-
+``get_php_session_object_property(php_session_object *obj, const char *prop)``
