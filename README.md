@@ -38,9 +38,7 @@ just fine.  I meant to stick with the standard types/functions and just overlook
   - return value: if successful, a php_session_array with the full session superglobal contents
                 on failure, NULL will be returned and any allocated memory will be freed
 
-``
-void free_php_session_array(php_session_array *arr)
-``
+``void free_php_session_array(php_session_array *arr)``
 
 ----------
 ## Types
@@ -106,13 +104,9 @@ All of the following return a pointer to a php_session_var, or NULL if not found
 
 Retrieve array element at index (type specific/no conversion):
 
-``
-get_php_session_array_index_str(php_session_array *arr, const char *index)
-get_php_session_array_index_int(php_session_array *arr, long index)
-``
+``get_php_session_array_index_str(php_session_array *arr, const char *index)``
+``get_php_session_array_index_int(php_session_array *arr, long index)``
 
 Retrieve a property from an object:
 
-``
-get_php_session_object_property(php_session_object *obj, const char *prop)
-``
+``get_php_session_object_property(php_session_object *obj, const char *prop)``
